@@ -22,4 +22,4 @@ jobs:
 
     - name: Run tests
       run: |
-        pytest Check_data.py
+        pytest CheckData.py
