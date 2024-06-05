@@ -49,6 +49,4 @@ def CheckData(y, t):
     if np.max(np.diff(sorted(np.concatenate(t)))) / (np.max(np.concatenate(t)) - np.min(np.concatenate(t))) > 0.1:
         print('Warning: There is a time gap of at least 10% of the observed range across subjects')
 
-if __name__ == "__main__":
-    test_check_time_gaps()
-    print("All tests passed!")
+
