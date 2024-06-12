@@ -24,3 +24,4 @@ jobs:
     - name: Run tests
       run: |
         pytest test_check_data.py
+        pytest test_HandleNumericAndNan.py                   
