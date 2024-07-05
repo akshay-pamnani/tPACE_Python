@@ -20,7 +20,6 @@ def handle_numerics_and_nan(Ly, Lt):
         if all(ni == 1 for ni in ni_y):
             raise ValueError("FPCA is aborted because the data do not contain repeated measurements in y!")
 
-    # Force the data to be list of numeric members
     Ly = [np.array(x, dtype=float) for x in Ly]
     Lt = [np.array(x, dtype=float) for x in Lt]
     Lt = [np.around(x, decimals=14) for x in Lt]
