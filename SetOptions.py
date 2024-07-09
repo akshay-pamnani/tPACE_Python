@@ -1,5 +1,18 @@
+from isRegular import isRegular
+import numpy as np
+
 def set_options(y, t, optns):
     # Extract options with defaults
+    t = [ti if isinstance(ti, (list, np.ndarray)) else np.atleast_1d(ti) for ti in t]
+    y = [yi if isinstance(yi, (list, np.ndarray)) else np.atleast_1d(yi) for yi in y]
+    
+    if optns is None:
+        optns = {}
+
+    def diff_range(values):
+        return max(values) - min(values)
+
+
     method_mu_cov_est = optns.get('methodMuCovEst')
     user_bw_mu = optns.get('userBwMu')
     method_bw_mu = optns.get('methodBwMu')
@@ -42,16 +55,23 @@ def set_options(y, t, optns):
         method_bw_mu = 'Default'
     if user_bw_mu is None:
         if method_bw_mu == 'Default':
-            user_bw_mu = 0.05 * (max(t) - min(t))
+            flattened_t = [item for sublist in t if isinstance(sublist, (list, np.ndarray)) for item in sublist]
+            flattened_t += [item for item in t if isinstance(item, (int, float))]
+            user_bw_mu = 0.05 * diff_range(flattened_t)
         else:
             user_bw_mu = 0.0
+
     if method_bw_cov is None:
         method_bw_cov = 'Default'
     if user_bw_cov is None:
         if method_bw_cov == 'Default':
-            user_bw_cov = 0.10 * (max(t) - min(t))
+            flattened_t = [item for sublist in t if isinstance(sublist, (list, np.ndarray)) for item in sublist]
+            flattened_t += [item for item in t if isinstance(item, (int, float))]
+            user_bw_cov = 0.10 * diff_range(flattened_t)
         else:
             user_bw_cov = 0.0
+
+
     if k_fold_mu_cov is None:
         k_fold_mu_cov = 10
     if method_select_k is None:
@@ -61,7 +81,7 @@ def set_options(y, t, optns):
     if fve_fitted_cov is None:
         fve_fitted_cov = None
     if data_type is None:
-        data_type = is_regular(t)
+        data_type = isRegular(t)
     if fit_eigen_values is None:
         fit_eigen_values = False
     if method_mu_cov_est is None:
@@ -178,5 +198,12 @@ def set_options(y, t, optns):
         'kFoldMuCov': k_fold_mu_cov, 'methodSelectK': method_select_k, 'FVEthreshold': fve_threshold, 'FVEfittedCov': fve_fitted_cov,
         'fitEigenValues': fit_eigen_values, 'maxK': max_k, 'dataType': data_type, 'error': error, 'shrink': shrink,
         'nRegGrid': n_reg_grid, 'rotationCut': rotation_cut, 'methodXi': method_xi, 'kernel': kernel,
-        'lean': lean, 'diagnosticsPlot': diagnostics_plot, 'plot': plot, 'numBins': num_bins, 'useBinnedCov': use_binned_cov,
+        'lean': lean, 'diagnosticsPlot': diagnostics_plot, 'plot': plot, 'numBins': num_bins, 'useBinnedCov': use_binned_cov,'useBinnedData':use_binned_data,
         'usergrid': user_grid, 'yname': yname, 'methodRho': method_rho, 'verbose': verbose, 'userMu': user_mu, 'userCov': user_cov}
+    
+    invalid_names = [name for name in optns.keys() if name not in ret_optns]
+    if invalid_names:
+        raise ValueError(f"Invalid option names: {', '.join(invalid_names)}")
+
+    return ret_optns
+

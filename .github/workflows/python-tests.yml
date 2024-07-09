@@ -25,4 +25,10 @@ jobs:
     - name: Run tests
       run: |
         pytest test_check_data.py
-        pytest test_HandleNumericAndNan.py                   
+        pytest test_HandleNumericAndNan.py     
+        pytest test_GetBinnedCurve.py
+        pytest test_GetBinnedDataset.py
+        
+                      
+
+        

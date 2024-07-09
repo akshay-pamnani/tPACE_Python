@@ -1,8 +1,16 @@
+import numpy as np
+
 def isRegular(t):
     # Check the data type in terms of dense-sparse. Classification is dense (2), or  data with missing values (1) or sparse (0) data
     # t : n-by-1 list of vectors 
 
-    tt = [item for sublist in t for item in sublist]
+    tt = []
+    for item in t:
+        if isinstance(item, (list, np.ndarray)):
+            tt.extend(item)
+        else:
+            tt.append(item)
+
     f = len(tt) / len(set(tt)) / len(t)
     
     if f == 1:
