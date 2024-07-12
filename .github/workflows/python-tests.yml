@@ -28,6 +28,7 @@ jobs:
         pytest test_HandleNumericAndNan.py     
         pytest test_GetBinnedCurve.py
         pytest test_GetBinnedDataset.py
+        pytest test_Minb.py
         
                       
 
