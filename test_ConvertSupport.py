@@ -1,3 +1,5 @@
+import numpy as np
+
 def setup_data():
     from_grid = np.arange(0, np.pi / 2, 0.1)
     to_grid = from_grid + 0.001
