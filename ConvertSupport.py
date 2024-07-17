@@ -5,14 +5,15 @@ def convert_support(from_grid, to_grid, mu=None, Cov=None, phi=None, is_cross_co
     if mu is not None:
         return map_x1d(from_grid, mu, to_grid)
     elif Cov is not None:
-        # Assuming Cov is a numpy array or matrix
-        f = interp2d(from_grid, from_grid, Cov, kind='linear')
-        return f(to_grid, to_grid)
+        interpolated_cov = interpolate_covariance(from_grid, Cov, to_grid)
+        if not is_cross_cov:
+            interpolated_cov = 0.5 * (interpolated_cov + interpolated_cov.T)  # Ensure symmetry
+        return interpolated_cov
     elif phi is not None:
-        return map_x1d(from_grid, phi, to_grid)
+        return map_x1d_matrix(from_grid, phi, to_grid)
     else:
         raise ValueError("One of mu, Cov, or phi must be provided.")
-    
+
 def map_x1d(from_grid, data, to_grid):
     # Interpolate 1D data from from_grid to to_grid
     f = interp1d(from_grid, data, kind='linear', fill_value='extrapolate')
@@ -33,3 +34,5 @@ def interpolate_covariance(from_grid, Cov, to_grid):
     grid_x, grid_y = np.meshgrid(to_grid, to_grid)
     interpolated_cov = griddata(points, values, (grid_x, grid_y), method='linear')
     return interpolated_cov
+
+
