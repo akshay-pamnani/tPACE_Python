@@ -1,4 +1,5 @@
 import numpy as np
+from ConvertSupport import convert_support
 
 def setup_data():
     from_grid = np.arange(0, np.pi / 2, 0.1)
