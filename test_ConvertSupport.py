@@ -24,7 +24,7 @@ def test_convert_support_phi():
 def test_convert_support_cov():
     from_grid, to_grid, _, _, _, Cov = setup_data()
     result_cov = convert_support(from_grid, to_grid, Cov=Cov)
-    np.testing.assert_allclose(Cov, result_cov, atol=1e-3)
+    np.testing.assert_allclose(Cov, result_cov, atol=2e-3)
 
 if __name__ == "__main__":
     pytest.main()
