@@ -1,9 +1,10 @@
 import numpy as np
 from scipy.interpolate import interp1d, interp2d,griddata
+from MapX1D import map_x_1d
 
 def convert_support(from_grid, to_grid, mu=None, Cov=None, phi=None, is_cross_cov=False):
     if mu is not None:
-        return map_x1d(from_grid, mu, to_grid)
+        return map_x_1d(from_grid, mu, to_grid)
     elif Cov is not None:
         interpolated_cov = interpolate_covariance(from_grid, Cov, to_grid)
         if not is_cross_cov:
@@ -13,11 +14,6 @@ def convert_support(from_grid, to_grid, mu=None, Cov=None, phi=None, is_cross_co
         return map_x1d_matrix(from_grid, phi, to_grid)
     else:
         raise ValueError("One of mu, Cov, or phi must be provided.")
-
-def map_x1d(from_grid, data, to_grid):
-    # Interpolate 1D data from from_grid to to_grid
-    f = interp1d(from_grid, data, kind='linear', fill_value='extrapolate')
-    return f(to_grid)
 
 def map_x1d_matrix(from_grid, matrix, to_grid):
     # Interpolate each column of the matrix from from_grid to to_grid
