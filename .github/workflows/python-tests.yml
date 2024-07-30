@@ -30,7 +30,7 @@ jobs:
         pytest test_GetBinnedDataset.py
         pytest test_Minb.py
         pytest test_ConvertSupport.py
-        
+        pytest test_MapX1D.py
                       
 
         
