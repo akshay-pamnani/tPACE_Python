@@ -88,4 +88,4 @@ def gcv_lwls_1d(yy, tt, kernel, npoly, nder, data_type, verbose=True):
 
     return {'bOpt': bOpt, 'bScore': bScr}
 
-# Note: Implement the `min_bandwidth` function based on your specific logic.
+
