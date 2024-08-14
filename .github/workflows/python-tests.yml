@@ -30,9 +30,9 @@ jobs:
         sudo apt-get install -y build-essential cmake
 
     - name: Build the C++ extension
-    run: |
-      cd src
-      python setup.py build_ext --inplace
+      run: |
+        cd src
+        python setup.py build_ext --inplace
 
     - name: Run tests
       run: |
@@ -44,7 +44,3 @@ jobs:
         pytest test_ConvertSupport.py
         pytest test_MapX1D.py
         pytest test_gcvlwls1d1.py
-
-                      
-
-        
