@@ -24,6 +24,16 @@ jobs:
         pip install pybind11
         pip install rdata
 
+    - name: Install build tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake
+
+      - name: Build the C++ extension
+      run: |
+        cd src
+        python setup.py build_ext --inplace
+
     - name: Run tests
       run: |
         pytest test_check_data.py
