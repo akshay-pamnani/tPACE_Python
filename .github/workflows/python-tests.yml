@@ -33,6 +33,7 @@ jobs:
 
     - name: Build the C++ extension
       run: |
+        cd src
         python setup.py build_ext --inplace
 
     - name: Run tests
