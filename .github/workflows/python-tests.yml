@@ -46,3 +46,4 @@ jobs:
         pytest test_ConvertSupport.py
         pytest test_MapX1D.py
         pytest test_gcvlwls1d1.py
+        pytest test_CVLwls1D.py
