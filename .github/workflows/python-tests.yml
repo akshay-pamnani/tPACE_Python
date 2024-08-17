@@ -23,6 +23,8 @@ jobs:
         pip install scipy
         pip install pybind11
         pip install rdata
+        wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
+    tar -xzf eigen-3.4.0.tar.gz
 
     - name: Install build tools
       run: |
