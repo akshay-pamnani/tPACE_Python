@@ -23,6 +23,9 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
 
     xin = np.array(t, dtype=float)
 
+    # Flatten the y array
+    yin = np.concatenate([np.array(arr).flatten() for arr in y])
+
     if isinstance(user_mu, dict) and 'mu' in user_mu and 't' in user_mu:
         buff = np.finfo(float).eps * max(np.abs(obs_grid)) * 10
         range_user = (min(user_mu['t']), max(user_mu['t']))
@@ -44,22 +47,22 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
                 raise ValueError('Not enough data points. At least 21 are required for GCV.')
 
             if method_bw_mu in ['GCV', 'GMeanAndGCV']:
-                bw_mu = gcv_lwls_1d(y, t, kernel, npoly, nder, data_type='Sparse')
+                bw_mu = gcv_lwls_1d(yin, t, kernel, npoly, nder, data_type='Sparse')
                 if len(bw_mu) == 0:
                     raise ValueError('The data is too sparse to estimate a mean function. Get more data!')
                 if method_bw_mu == 'GMeanAndGCV':
                     min_bw = np.min(t)  # Adjust based on your needs
                     bw_mu = np.sqrt(min_bw * bw_mu)
             else:
-                bw_mu = CVLwls1D(y, t, kernel, npoly, nder, optns)
+                bw_mu = CVLwls1D(yin, t, kernel, npoly, nder, optns)
 
+        # Sort xin and yin using the sorted indices
         sorted_indices = np.argsort(xin)
-        yin = np.array(y)[sorted_indices]
-        xin = np.sort(xin)
-        win = np.ones_like(xin)
+        xin = xin[sorted_indices]  # Sort xin
+        yin = yin[sorted_indices]  # Sort yin
 
-        mu = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, obs_grid, win)
-        mu_dense = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, reg_grid, win)
+        mu = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, obs_grid, np.ones_like(xin))
+        mu_dense = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, reg_grid, np.ones_like(xin))
 
     result = {
         'mu': mu,
@@ -67,6 +70,7 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
         'bw_mu': bw_mu
     }
     return result
+
 
 # Example test data
 y = np.random.rand(50)  # 50 random observations
