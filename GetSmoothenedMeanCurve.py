@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.interpolate import interp1d
-from scipy.optimize import minimize
 from Lwls1D import lwls_1d
 from GCVLwls1D1 import gcv_lwls_1d
 from CVLwls1D import CVLwls1D
@@ -13,7 +12,20 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
     user_bw_mu = optns['userBwMu']
     kernel = optns['kernel']
 
-    # If the user provided a mean function use it
+    # Print diagnostic info about t
+    print("Type of t:", type(t))
+    print("Contents of t:", t)
+
+    # Ensure t is a flat list or array of numbers
+    if isinstance(t, (list, np.ndarray)):
+        t = np.array(t).flatten()  # Convert to a 1D NumPy array
+    else:
+        raise ValueError("Expected t to be a list or NumPy array.")
+
+    # Ensure xin is a NumPy array of floats
+    xin = np.array(t, dtype=float)
+    
+    # Continue with the rest of your logic
     if isinstance(user_mu, dict) and 'mu' in user_mu and 't' in user_mu:
         buff = np.finfo(float).eps * max(np.abs(obs_grid)) * 10
         range_user = (min(user_mu['t']), max(user_mu['t']))
@@ -40,8 +52,6 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
             else:
                 bw_mu = CVLwls1D(y, t, kernel, npoly, nder, optns)
 
-        # Ensure xin is a NumPy array of floats
-        xin = np.array(t, dtype=float)  
         sorted_indices = np.argsort(xin)  # Get the sorted indices
         yin = np.array(y)[sorted_indices]  # Sort y according to xin
         xin = np.sort(xin)  # Sort xin for further processing
@@ -57,3 +67,18 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
         'bw_mu': bw_mu
     }
     return result
+
+# # Example test data
+# y = np.random.rand(10)  # 10 random observations
+# t = np.linspace(0, 1, 10)  # 10 time points evenly spaced
+# obs_grid = np.linspace(0, 1, 50)  # Observation grid
+# reg_grid = np.linspace(0, 1, 50)  # Regular grid
+# optns = {
+#     'userMu': None,  # No user-defined mean function
+#     'methodBwMu': 'GCV',  # Example bandwidth method
+#     'userBwMu': -1,  # User bandwidth not specified
+#     'kernel': 'epanechnikov'  # Example kernel
+# }
+
+# result = get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns)
+# print(result)
