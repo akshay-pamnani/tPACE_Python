@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.interpolate import interp1d
+from scipy.optimize import minimize
 from Lwls1D import lwls_1d
 from GCVLwls1D1 import gcv_lwls_1d
 from CVLwls1D import CVLwls1D
@@ -30,22 +31,25 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
             bw_mu = user_bw_mu
         else:
             if method_bw_mu in ['GCV', 'GMeanAndGCV']:
-                bw_mu = gcv_lwls_1d(y, t, kernel, npoly, nder)  # Define this function based on your needs
+                bw_mu = gcv_lwls_1d(y, t, kernel, npoly, nder)
                 if len(bw_mu) == 0:
                     raise ValueError('The data is too sparse to estimate a mean function. Get more data!')
                 if method_bw_mu == 'GMeanAndGCV':
                     min_bw = np.min(t)  # Adjust based on your needs
                     bw_mu = np.sqrt(min_bw * bw_mu)
             else:
-                bw_mu = CVLwls1D(y, t, kernel, npoly, nder, optns)  # Define this function based on your needs
+                bw_mu = CVLwls1D(y, t, kernel, npoly, nder, optns)
 
-        xin = np.array(t)  # Ensure xin is a NumPy array of floats or ints
-        sorted_indices = np.argsort(xin)  # Get the indices that would sort xin
-        yin = np.array(y)[sorted_indices]  # Sort y according to the sorted indices of xin
-        xin = np.sort(xin)
+        # Ensure xin is a NumPy array of floats
+        xin = np.array(t, dtype=float)  
+        sorted_indices = np.argsort(xin)  # Get the sorted indices
+        yin = np.array(y)[sorted_indices]  # Sort y according to xin
+        xin = np.sort(xin)  # Sort xin for further processing
         win = np.ones_like(xin)
-        mu = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, obs_grid, win)  # Define this function based on your needs
-        mu_dense = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, reg_grid, win)  # Define this function based on your needs
+
+        # Compute mu using lwls_1d
+        mu = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, obs_grid, win)
+        mu_dense = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, reg_grid, win)
 
     result = {
         'mu': mu,
