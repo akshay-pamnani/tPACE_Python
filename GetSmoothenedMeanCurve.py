@@ -72,6 +72,7 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
         print(xin.ndim)
         print(len(xin))
         print(xin)
+        print(np.all(np.diff(xin) > 0))
 
         if xin.ndim != 1 or xin.size < 2:
             raise ValueError("xin must be a 1D array with at least two elements")
