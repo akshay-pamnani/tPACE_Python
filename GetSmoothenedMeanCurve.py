@@ -44,7 +44,7 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
                 raise ValueError('Not enough data points. At least 21 are required for GCV.')
 
             if method_bw_mu in ['GCV', 'GMeanAndGCV']:
-                bw_mu = gcv_lwls_1d(y, t, kernel, npoly, nder)
+                bw_mu = gcv_lwls_1d(y, t, kernel, npoly, nder, data_type='Sparse')
                 if len(bw_mu) == 0:
                     raise ValueError('The data is too sparse to estimate a mean function. Get more data!')
                 if method_bw_mu == 'GMeanAndGCV':
