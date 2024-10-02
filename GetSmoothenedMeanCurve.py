@@ -41,7 +41,7 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
             else:
                 bw_mu = CVLwls1D(y, t, kernel, npoly, nder, optns)  # Define this function based on your needs
 
-        xin = np.array(t)
+        xin = np.array(t, dtype=object) # changed this
         yin = np.array(y)[np.argsort(xin)]
         xin = np.sort(xin)
         win = np.ones_like(xin)
