@@ -26,6 +26,14 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
     # Flatten the y array
     yin = np.concatenate([np.array(arr).flatten() for arr in y])
 
+    # Check for empty xin or yin
+    if len(xin) == 0 or len(yin) == 0:
+        raise ValueError("xin or yin is empty. Ensure valid data is provided.")
+
+    # Ensure xin is one-dimensional
+    if xin.ndim == 0:
+        raise ValueError("Expected xin to be a one-dimensional array.")
+
     if isinstance(user_mu, dict) and 'mu' in user_mu and 't' in user_mu:
         buff = np.finfo(float).eps * max(np.abs(obs_grid)) * 10
         range_user = (min(user_mu['t']), max(user_mu['t']))
@@ -71,8 +79,7 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
     }
     return result
 
-
-# # Example test data
+# Example test data
 # y = np.random.rand(50)  # 50 random observations
 # t = np.linspace(0, 1, 50)  # 50 time points evenly spaced
 # obs_grid = np.linspace(0, 1, 100)  # Observation grid with 100 points for smoother output
