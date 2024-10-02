@@ -80,9 +80,8 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
         print(xin)
         print(np.all(np.diff(xin) > 0))
 
-        
-        mu = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, obs_grid, np.ones_like(xin))
-        mu_dense = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, reg_grid, np.ones_like(xin))
+        mu = lwls_1d(bw_mu, kernel, np.ones_like(xin), xin, yin, obs_grid, npoly, nder)
+        mu_dense = lwls_1d(bw_mu, kernel, np.ones_like(xin), xin, yin, reg_grid, npoly, nder)
 
     result = {
         'mu': mu,
