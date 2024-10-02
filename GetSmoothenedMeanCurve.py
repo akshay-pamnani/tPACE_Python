@@ -69,6 +69,12 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
         xin = xin[sorted_indices]  # Sort xin
         yin = yin[sorted_indices]  # Sort yin
 
+        if xin.ndim != 1 or xin.size < 2:
+            raise ValueError("xin must be a 1D array with at least two elements")
+
+        if not np.all(np.diff(xin) > 0):
+            raise ValueError("xin must be sorted in ascending order")
+
         mu = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, obs_grid, np.ones_like(xin))
         mu_dense = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, reg_grid, np.ones_like(xin))
 
