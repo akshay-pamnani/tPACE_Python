@@ -18,13 +18,17 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
 
     # Ensure t is a flat list or array of numbers
     if isinstance(t, (list, np.ndarray)):
-        t = np.array(t).flatten()  # Convert to a 1D NumPy array
+        # Check for nested lists and flatten
+        try:
+            t = np.concatenate([np.array(i).flatten() for i in t]) if isinstance(t[0], (list, np.ndarray)) else np.array(t).flatten()
+        except Exception as e:
+            raise ValueError(f"Error converting t to a 1D array: {e}")
     else:
         raise ValueError("Expected t to be a list or NumPy array.")
 
     # Ensure xin is a NumPy array of floats
     xin = np.array(t, dtype=float)
-    
+
     # Continue with the rest of your logic
     if isinstance(user_mu, dict) and 'mu' in user_mu and 't' in user_mu:
         buff = np.finfo(float).eps * max(np.abs(obs_grid)) * 10
@@ -68,17 +72,17 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
     }
     return result
 
-# # Example test data
-# y = np.random.rand(10)  # 10 random observations
-# t = np.linspace(0, 1, 10)  # 10 time points evenly spaced
-# obs_grid = np.linspace(0, 1, 50)  # Observation grid
-# reg_grid = np.linspace(0, 1, 50)  # Regular grid
-# optns = {
-#     'userMu': None,  # No user-defined mean function
-#     'methodBwMu': 'GCV',  # Example bandwidth method
-#     'userBwMu': -1,  # User bandwidth not specified
-#     'kernel': 'epanechnikov'  # Example kernel
-# }
+# Example test data
+y = np.random.rand(10)  # 10 random observations
+t = np.linspace(0, 1, 10)  # 10 time points evenly spaced
+obs_grid = np.linspace(0, 1, 50)  # Observation grid
+reg_grid = np.linspace(0, 1, 50)  # Regular grid
+optns = {
+    'userMu': None,  # No user-defined mean function
+    'methodBwMu': 'GCV',  # Example bandwidth method
+    'userBwMu': -1,  # User bandwidth not specified
+    'kernel': 'epanechnikov'  # Example kernel
+}
 
-# result = get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns)
-# print(result)
+result = get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns)
+print(result)
