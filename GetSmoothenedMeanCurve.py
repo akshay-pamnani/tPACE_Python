@@ -1,10 +1,8 @@
 import numpy as np
-from scipy.interpolate import interp1d, UnivariateSpline
-from scipy.optimize import minimize
+from scipy.interpolate import interp1d
 from Lwls1D import lwls_1d
 from GCVLwls1D1 import gcv_lwls_1d
 from CVLwls1D import CVLwls1D
-
 
 def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
     user_mu = optns['userMu']
@@ -41,8 +39,9 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
             else:
                 bw_mu = CVLwls1D(y, t, kernel, npoly, nder, optns)  # Define this function based on your needs
 
-        xin = np.array(t, dtype=object) # changed this
-        yin = np.array(y)[np.argsort(xin)]
+        xin = np.array(t)  # Ensure xin is a NumPy array of floats or ints
+        sorted_indices = np.argsort(xin)  # Get the indices that would sort xin
+        yin = np.array(y)[sorted_indices]  # Sort y according to the sorted indices of xin
         xin = np.sort(xin)
         win = np.ones_like(xin)
         mu = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, obs_grid, win)  # Define this function based on your needs
@@ -54,4 +53,3 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
         'bw_mu': bw_mu
     }
     return result
-
