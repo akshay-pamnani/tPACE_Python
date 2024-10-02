@@ -72,20 +72,20 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
     return result
 
 
-# Example test data
-y = np.random.rand(50)  # 50 random observations
-t = np.linspace(0, 1, 50)  # 50 time points evenly spaced
-obs_grid = np.linspace(0, 1, 100)  # Observation grid with 100 points for smoother output
-reg_grid = np.linspace(0, 1, 100)  # Regular grid with 100 points for smoother output
-optns = {
-    'userMu': None,  # No user-defined mean function
-    'methodBwMu': 'GCV',  # Example bandwidth method
-    'userBwMu': -1,  # User bandwidth not specified
-    'kernel': 'epanechnikov'  # Example kernel
-}
+# # Example test data
+# y = np.random.rand(50)  # 50 random observations
+# t = np.linspace(0, 1, 50)  # 50 time points evenly spaced
+# obs_grid = np.linspace(0, 1, 100)  # Observation grid with 100 points for smoother output
+# reg_grid = np.linspace(0, 1, 100)  # Regular grid with 100 points for smoother output
+# optns = {
+#     'userMu': None,  # No user-defined mean function
+#     'methodBwMu': 'GCV',  # Example bandwidth method
+#     'userBwMu': -1,  # User bandwidth not specified
+#     'kernel': 'epanechnikov'  # Example kernel
+# }
 
-try:
-    result = get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns)
-    print(result)
-except ValueError as e:
-    print("Error:", e)
+# try:
+#     result = get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns)
+#     print(result)
+# except ValueError as e:
+#     print("Error:", e)
