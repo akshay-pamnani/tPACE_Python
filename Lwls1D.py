@@ -9,7 +9,7 @@ def lwls_1d(bw, kernel_type, win=None, xin=None, yin=None, xout=None, npoly=1, n
         win = np.ones_like(xin)
     if xin is None or yin is None or xout is None:
         raise ValueError('xin, yin, and xout must be provided.')
-    
+    print(xin)
     if not np.all(np.diff(xin) > 0):
         raise ValueError('`xin` needs to be sorted in increasing order')
     
