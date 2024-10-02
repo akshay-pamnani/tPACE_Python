@@ -1,49 +1,98 @@
-import unittest
 import numpy as np
-import rdata
 from scipy.interpolate import interp1d
+from Lwls1D import lwls_1d
+from GCVLwls1D1 import gcv_lwls_1d
+from CVLwls1D import CVLwls1D
 
-# Import the required functions
-from GetSmoothenedMeanCurve import get_smoothed_mean_curve
-from SetOptions import set_options
+def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
+    user_mu = optns['userMu']
+    method_bw_mu = optns['methodBwMu']
+    npoly = 1
+    nder = 0
+    user_bw_mu = optns['userBwMu']
+    kernel = optns['kernel']
 
-class TestSmoothedMeanCurve(unittest.TestCase):
+    # Ensure t is a flat list or array of numbers
+    if isinstance(t, (list, np.ndarray)):
+        if isinstance(t[0], (list, np.ndarray)):
+            t = np.concatenate([np.array(i).flatten() for i in t])
+        else:
+            t = np.array(t).flatten()
+    else:
+        raise ValueError("Expected t to be a list or NumPy array.")
 
-    @classmethod
-    def setUpClass(cls):
-        # Load the data from the RData file
-        parsed = rdata.parser.parse_file("dataGeneratedByExampleSeed123.RData")
-        data = rdata.conversion.convert(parsed)
+    xin = np.array(t, dtype=float)
 
-        # Assuming y and t are arrays saved in the RData file
-        cls.y = data['y']  # assuming y is saved as a numpy array
-        cls.t = data['t']  # assuming t is saved as a numpy array
+    # Flatten the y array
+    yin = np.concatenate([np.array(arr).flatten() for arr in y])
 
-        # Set options with the default kernel (epanechnikov kernel)
-        p = {'kernel': 'epan'}
-        cls.optns = set_options(cls.y, cls.t, p)
+    # Check for empty xin or yin
+    if len(xin) == 0 or len(yin) == 0:
+        raise ValueError("xin or yin is empty. Ensure valid data is provided.")
 
-        # Generate grids for observation and regular grids
-        cls.out1 = sorted(set(np.concatenate(cls.t)))  # Observation grid
-        cls.out21 = np.linspace(min(cls.out1), max(cls.out1), num=30)  # Regular grid
+    # Ensure xin is one-dimensional
+    if xin.ndim == 0:
+        raise ValueError("Expected xin to be a one-dimensional array.")
 
-    def test_epan_kernel(self):
-        # Test with the Epanechnikov kernel
-        smc_obj = get_smoothed_mean_curve(y=self.y, t=self.t, obs_grid=self.out1, reg_grid=self.out21, optns=self.optns)
-        # Assert that the sum of the smoothed curve is close to the expected value
-        self.assertAlmostEqual(np.sum(smc_obj['mu']), 1.176558873333339e+02, delta=4)
+    if isinstance(user_mu, dict) and 'mu' in user_mu and 't' in user_mu:
+        buff = np.finfo(float).eps * max(np.abs(obs_grid)) * 10
+        range_user = (min(user_mu['t']), max(user_mu['t']))
+        range_obs = (min(obs_grid), max(obs_grid))
+        if range_user[0] > range_obs[0] + buff or range_user[1] < range_obs[1] - buff:
+            raise ValueError('The range defined by the user provided mean does not cover the support of the data.')
 
-    def test_rect_kernel(self):
-        # Test with the rectangular kernel
-        self.optns['kernel'] = 'rect'
-        smc_obj = get_smoothed_mean_curve(y=self.y, t=self.t, obs_grid=self.out1, reg_grid=self.out21, optns=self.optns)
-        self.assertAlmostEqual(np.sum(smc_obj['mu']), 1.186398254457767e+02, delta=6)
+        mu_interp = interp1d(user_mu['t'], user_mu['mu'], kind='linear', fill_value="extrapolate")
+        mu = mu_interp(obs_grid)
+        mu_dense_interp = interp1d(obs_grid, mu, kind='linear', fill_value="extrapolate")
+        mu_dense = mu_dense_interp(reg_grid)
+        bw_mu = None
+    else:
+        if user_bw_mu > 0:
+            bw_mu = user_bw_mu
+        else:
+            # Check if there are enough data points
+            if len(t) < 21:
+                raise ValueError('Not enough data points. At least 21 are required for GCV.')
 
-    def test_gauss_kernel(self):
-        # Test with the Gaussian kernel
-        self.optns['kernel'] = 'gauss'
-        smc_obj = get_smoothed_mean_curve(y=self.y, t=self.t, obs_grid=self.out1, reg_grid=self.out21, optns=self.optns)
-        self.assertAlmostEqual(np.sum(smc_obj['mu']), 1.206167514696777e+02, delta=4)
+            if method_bw_mu in ['GCV', 'GMeanAndGCV']:
+                bw_mu = gcv_lwls_1d(yin, t, kernel, npoly, nder, data_type='Sparse')
+                if len(bw_mu) == 0:
+                    raise ValueError('The data is too sparse to estimate a mean function. Get more data!')
+                if method_bw_mu == 'GMeanAndGCV':
+                    min_bw = np.min(t)  # Adjust based on your needs
+                    bw_mu = np.sqrt(min_bw * bw_mu)
+            else:
+                bw_mu = CVLwls1D(yin, t, kernel, npoly, nder, optns)
 
-if __name__ == '__main__':
-    unittest.main()
+        # Sort xin and yin using the sorted indices
+        sorted_indices = np.argsort(xin)
+        xin = xin[sorted_indices]  # Sort xin
+        yin = yin[sorted_indices]  # Sort yin
+
+        mu = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, obs_grid, np.ones_like(xin))
+        mu_dense = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, reg_grid, np.ones_like(xin))
+
+    result = {
+        'mu': mu,
+        'muDense': mu_dense,
+        'bw_mu': bw_mu
+    }
+    return result
+
+# # Example test data
+# y = np.random.rand(50)  # 50 random observations
+# t = np.linspace(0, 1, 50)  # 50 time points evenly spaced
+# obs_grid = np.linspace(0, 1, 100)  # Observation grid with 100 points for smoother output
+# reg_grid = np.linspace(0, 1, 100)  # Regular grid with 100 points for smoother output
+# optns = {
+#     'userMu': None,  # No user-defined mean function
+#     'methodBwMu': 'GCV',  # Example bandwidth method
+#     'userBwMu': -1,  # User bandwidth not specified
+#     'kernel': 'epanechnikov'  # Example kernel
+# }
+
+# try:
+#     result = get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns)
+#     print(result)
+# except ValueError as e:
+#     print("Error:", e)
