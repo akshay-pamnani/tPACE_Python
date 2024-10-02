@@ -69,6 +69,10 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
         xin = xin[sorted_indices]  # Sort xin
         yin = yin[sorted_indices]  # Sort yin
 
+        print(xin.ndim)
+        print(len(xin))
+        print(xin)
+
         if xin.ndim != 1 or xin.size < 2:
             raise ValueError("xin must be a 1D array with at least two elements")
 
