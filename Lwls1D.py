@@ -5,11 +5,17 @@ sys.path.append(os.path.abspath('src'))
 from CPPlwls1d_py import CPPlwls1d
 
 def lwls_1d(bw, kernel_type, win=None, xin=None, yin=None, xout=None, npoly=1, nder=0):
+
+    # Ensure xin, yin, win, and xout are numpy arrays
+    xin = np.array(xin) if xin is not None else None
+    yin = np.array(yin) if yin is not None else None
+    xout = np.array(xout) if xout is not None else None
+    win = np.array(win) if win is not None else np.ones_like(xin)
+    
     if win is None:
         win = np.ones_like(xin)
     if xin is None or yin is None or xout is None:
         raise ValueError('xin, yin, and xout must be provided.')
-    print(xin)
     if not np.all(np.diff(xin) > 0):
         raise ValueError('`xin` needs to be sorted in increasing order')
     
