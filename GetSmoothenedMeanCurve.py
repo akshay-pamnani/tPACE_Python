@@ -12,24 +12,17 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
     user_bw_mu = optns['userBwMu']
     kernel = optns['kernel']
 
-    # Print diagnostic info about t
-    print("Type of t:", type(t))
-    print("Contents of t:", t)
-
     # Ensure t is a flat list or array of numbers
     if isinstance(t, (list, np.ndarray)):
-        # Check for nested lists and flatten
-        try:
-            t = np.concatenate([np.array(i).flatten() for i in t]) if isinstance(t[0], (list, np.ndarray)) else np.array(t).flatten()
-        except Exception as e:
-            raise ValueError(f"Error converting t to a 1D array: {e}")
+        if isinstance(t[0], (list, np.ndarray)):
+            t = np.concatenate([np.array(i).flatten() for i in t])
+        else:
+            t = np.array(t).flatten()
     else:
         raise ValueError("Expected t to be a list or NumPy array.")
 
-    # Ensure xin is a NumPy array of floats
     xin = np.array(t, dtype=float)
 
-    # Continue with the rest of your logic
     if isinstance(user_mu, dict) and 'mu' in user_mu and 't' in user_mu:
         buff = np.finfo(float).eps * max(np.abs(obs_grid)) * 10
         range_user = (min(user_mu['t']), max(user_mu['t']))
@@ -46,8 +39,12 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
         if user_bw_mu > 0:
             bw_mu = user_bw_mu
         else:
+            # Check if there are enough data points
+            if len(t) < 21:
+                raise ValueError('Not enough data points. At least 21 are required for GCV.')
+
             if method_bw_mu in ['GCV', 'GMeanAndGCV']:
-                bw_mu = gcv_lwls_1d(y, t, kernel, npoly, nder, data_type='Sparse')
+                bw_mu = gcv_lwls_1d(y, t, kernel, npoly, nder)
                 if len(bw_mu) == 0:
                     raise ValueError('The data is too sparse to estimate a mean function. Get more data!')
                 if method_bw_mu == 'GMeanAndGCV':
@@ -56,12 +53,11 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
             else:
                 bw_mu = CVLwls1D(y, t, kernel, npoly, nder, optns)
 
-        sorted_indices = np.argsort(xin)  # Get the sorted indices
-        yin = np.array(y)[sorted_indices]  # Sort y according to xin
-        xin = np.sort(xin)  # Sort xin for further processing
+        sorted_indices = np.argsort(xin)
+        yin = np.array(y)[sorted_indices]
+        xin = np.sort(xin)
         win = np.ones_like(xin)
 
-        # Compute mu using lwls_1d
         mu = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, obs_grid, win)
         mu_dense = lwls_1d(bw_mu, kernel, npoly, nder, xin, yin, reg_grid, win)
 
@@ -73,10 +69,10 @@ def get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns):
     return result
 
 # Example test data
-y = np.random.rand(10)  # 10 random observations
-t = np.linspace(0, 1, 10)  # 10 time points evenly spaced
-obs_grid = np.linspace(0, 1, 50)  # Observation grid
-reg_grid = np.linspace(0, 1, 50)  # Regular grid
+y = np.random.rand(50)  # 50 random observations
+t = np.linspace(0, 1, 50)  # 50 time points evenly spaced
+obs_grid = np.linspace(0, 1, 100)  # Observation grid with 100 points for smoother output
+reg_grid = np.linspace(0, 1, 100)  # Regular grid with 100 points for smoother output
 optns = {
     'userMu': None,  # No user-defined mean function
     'methodBwMu': 'GCV',  # Example bandwidth method
@@ -84,5 +80,8 @@ optns = {
     'kernel': 'epanechnikov'  # Example kernel
 }
 
-result = get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns)
-print(result)
+try:
+    result = get_smoothed_mean_curve(y, t, obs_grid, reg_grid, optns)
+    print(result)
+except ValueError as e:
+    print("Error:", e)
