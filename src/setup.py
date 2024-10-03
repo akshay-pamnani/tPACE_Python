@@ -16,7 +16,7 @@ eigen_include_path = 'eigen-3.4.0'
 ext_modules = [
     Extension(
         'CPPlwls1d_py',
-        sources=['src/CPPlwls1d_py.cpp'],
+        sources=['CPPlwls1d_py.cpp'],
         include_dirs=[
             # Path to pybind11 headers
             get_pybind_include(),
@@ -28,7 +28,7 @@ ext_modules = [
     ),
     Extension(
         'trapzRcpp',
-        sources=['src/trapzRcpp.cpp'],
+        sources=['trapzRcpp.cpp'],
         include_dirs=[
             # Path to pybind11 headers
             get_pybind_include(),
