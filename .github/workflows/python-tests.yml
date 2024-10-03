@@ -50,3 +50,4 @@ jobs:
         pytest test_CVLwls1D.py
         pytest test_GetSmoothenedMeanCurve.py
         pytest test_CreateFolds.py
+        pytest test_trapzRcpp.py
