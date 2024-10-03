@@ -6,9 +6,9 @@
 
 namespace py = pybind11;
 
-// Function to check if a range is sorted
+// Function to check if a range is sorted (renamed to avoid conflict)
 template <class iter>
-bool is_sorted(iter begin, iter end) {
+bool custom_is_sorted(iter begin, iter end) {
     if (begin == end) return true;
     iter next = begin;
     while (++next != end) {
@@ -24,7 +24,7 @@ double trapz(const std::vector<double> &X, const std::vector<double> &Y) {
     if (Y.size() != X.size()) {
         throw std::invalid_argument("The input Y-grid does not have the same number of points as input X-grid.");
     }
-    if (is_sorted(X.begin(), X.end())) {
+    if (custom_is_sorted(X.begin(), X.end())) {
         double trapzsum = 0;
         for (unsigned int ind = 0; ind != X.size() - 1; ++ind) {
             trapzsum += 0.5 * (X[ind + 1] - X[ind]) * (Y[ind] + Y[ind + 1]);
