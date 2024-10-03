@@ -49,3 +49,4 @@ jobs:
         pytest test_gcvlwls1d1.py
         pytest test_CVLwls1D.py
         pytest test_GetSmoothenedMeanCurve.py
+        pytest test_CreateFolds.py
