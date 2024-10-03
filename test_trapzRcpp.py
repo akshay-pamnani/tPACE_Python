@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from trapzRcpp import trapzRcpp 
+from trapzRcpp import trapz
 
 def test_trapzRcpp_trivial_example():
     x = np.array([0, 2])
