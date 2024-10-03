@@ -1,5 +1,8 @@
 import numpy as np
 import pytest
+import sys
+import os
+sys.path.append(os.path.abspath('src'))
 from trapzRcpp import trapz
 
 def test_trapzRcpp_trivial_example():
