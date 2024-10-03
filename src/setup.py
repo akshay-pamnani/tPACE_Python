@@ -4,18 +4,19 @@ import pybind11
 import sys
 
 class get_pybind_include(object):
-    """Helper class to determine the pybind11 include path
+    """Helper class to determine the pybind11 include path.
     The purpose of this class is to postpone importing pybind11 until it is actually installed,
-    so that the `get_include()` method can be invoked. """
+    so that the `get_include()` method can be invoked."""
     def __str__(self):
         return pybind11.get_include()
 
 eigen_include_path = 'eigen-3.4.0'
 
+# Define extensions
 ext_modules = [
     Extension(
         'CPPlwls1d_py',
-        sources=['CPPlwls1d_py.cpp'],
+        sources=['src/CPPlwls1d_py.cpp'],
         include_dirs=[
             # Path to pybind11 headers
             get_pybind_include(),
@@ -24,6 +25,15 @@ ext_modules = [
         ],
         language='c++',
         extra_compile_args=['-std=c++11'],
+    ),
+    Extension(
+        'trapzRcpp',
+        sources=['src/trapzRcpp.cpp'],
+        include_dirs=[
+            # Path to pybind11 headers
+            get_pybind_include(),
+        ],
+        language='c++',
     ),
 ]
 
