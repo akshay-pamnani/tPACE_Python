@@ -1,21 +1,6 @@
 import numpy as np
-from scipy.stats import uniform
-
-def norm_kernel(x, X, h, K, supp):
-    """Calculate the normal kernel values for the given inputs."""
-    # Currently only Epanechnikov kernel is supported
-    if K != 'epan':
-        print('Epanechnikov kernel is only supported. Using Epanechnikov kernel.')
-        K = 'epan'
-    
-    # Ensure x and X are numpy arrays
-    x = np.asarray(x)
-    X = np.asarray(X)
-
-    # Compute the Epanechnikov kernel
-    u = (x[:, None] - X) / h  # Broadcasting to compute the difference
-    kernel_values = 0.75 * (1 - u ** 2) * (np.abs(u) <= 1)  # Epanechnikov kernel formula
-    return kernel_values
+from NormKernel import NormKernel
+from MgnJntDensity import dunif
 
 def nw_mgn_reg(Y, x, X, h=None, K='epan', supp=None):
     """
@@ -60,17 +45,35 @@ def nw_mgn_reg(Y, x, X, h=None, K='epan', supp=None):
     # Calculate weights based on the uniform distribution and supports
     tmpIndex = np.ones(n)
     for j in range(d):
-        tmpIndex *= uniform.pdf(X[:, j], loc=supp[j, 0], scale=supp[j, 1] - supp[j, 0]) * (supp[j, 1] - supp[j, 0])
+        tmpIndex *= dunif(X[:, j], supp[j, 0], supp[j, 1]) * (supp[j, 1] - supp[j, 0])
     tmpIndex = np.where(tmpIndex == 1)[0]
 
     # Nadaraya-Watson estimation for each component function
     for j in range(d):
-        pHatj = norm_kernel(x[:, j], X[:, j], h[j], K, (supp[j, 0], supp[j, 1]))
-        rHatj = np.sum(pHatj[:, tmpIndex] @ Y[tmpIndex]) / len(Y)
+
+        pHatj = NormKernel(x[:, j], X[:, j], h[j], K, (supp[j, 0], supp[j, 1]))
+
+        print(f"Debug: pHatj shape for component {j}: {pHatj.shape}")
         
+        print(f"Debug: tmpIndex for component {j}: {tmpIndex}")
+        
+        rHatj = (pHatj[:, tmpIndex] @ Y[tmpIndex]) / len(Y)
+        
+        print(f"Debug: rHatj for component {j}: {rHatj.shape}, Value: {rHatj}")
+
         pHatj = np.sum(pHatj[:, tmpIndex], axis=1) / len(Y)
         
+        print(f"Debug: pHatj_sum for component {j}: {pHatj.shape}, Value: {pHatj}")
+
         tmpInd = np.where(pHatj != 0)[0]
+        
+        print(f"Debug: Non-zero indices for pHatj_sum for component {j}: {tmpInd}")
+
+        # If tmpInd is not empty, show its values
+        if len(tmpInd) > 0:
+            print(f"Debug: Values for valid indices in rHatj: {rHatj[tmpInd]}, pHatj_sum: {pHatj[tmpInd]}")
+        else:
+            print(f"Debug: No valid indices for component {j} to update fNW.")
         
         fNW[tmpInd, j] = rHatj[tmpInd] / pHatj[tmpInd]
 
