@@ -4,6 +4,7 @@ import os
 sys.path.append(os.path.abspath('src'))
 from trapzRcpp import trapz
 
+
 def CompFntCent(f, j, x, MgnJntDens):
     """
     Centering component functions using the marginal mean.
@@ -17,7 +18,7 @@ def CompFntCent(f, j, x, MgnJntDens):
     Returns:
     np.ndarray: Centered component function values at the estimation grid (N-dim. vector).
     """
-
+    
     fj = f[:, j]
     xj = x[:, j]
 
@@ -30,7 +31,17 @@ def CompFntCent(f, j, x, MgnJntDens):
     fj_sorted = fj[sorted_indices]
     pMatMgn_sorted = pMatMgn[sorted_indices]
 
+    # Debugging prints
+    print("xj_sorted:", xj_sorted)
+    print("fj_sorted:", fj_sorted)
+    print("pMatMgn_sorted:", pMatMgn_sorted)
+
+    # Check if xj_sorted is sorted
+    if not np.all(np.diff(xj_sorted) >= 0):
+        print("Warning: xj_sorted is not sorted correctly.")
+
     # Compute the centered component
     tmp = fj - trapz(fj_sorted * pMatMgn_sorted, xj_sorted)
 
     return tmp
+
