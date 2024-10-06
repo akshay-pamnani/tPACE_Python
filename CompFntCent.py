@@ -27,9 +27,9 @@ def CompFntCent(f, j, x, MgnJntDens):
 
     # Sort xj and obtain the sorted indices
     sorted_indices = np.argsort(xj)
-    xj_sorted = xj[sorted_indices]
-    fj_sorted = fj[sorted_indices]
-    pMatMgn_sorted = pMatMgn[sorted_indices]
+    xj_sorted = xj[sorted_indices].flatten()
+    fj_sorted = fj[sorted_indices].flatten()
+    pMatMgn_sorted = pMatMgn[sorted_indices].flatten()
 
     # Debugging prints
     print("xj_sorted:", xj_sorted)
