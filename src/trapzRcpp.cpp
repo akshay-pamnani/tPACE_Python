@@ -3,6 +3,7 @@
 #include <limits> // To get NaN
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 namespace py = pybind11;
 
