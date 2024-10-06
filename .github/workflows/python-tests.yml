@@ -51,3 +51,4 @@ jobs:
         pytest test_GetSmoothenedMeanCurve.py
         pytest test_CreateFolds.py
         pytest test_trapzRcpp.py
+        pytest test_SBFitting.py
