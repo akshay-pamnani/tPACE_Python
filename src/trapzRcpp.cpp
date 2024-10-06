@@ -3,6 +3,7 @@
 #include <limits> // To get NaN
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 namespace py = pybind11;
 
@@ -30,7 +31,7 @@ double trapz(const std::vector<double> &X, const std::vector<double> &Y) {
     }
     std::cout << std::endl;
 
-    
+
     if (custom_is_sorted(X.begin(), X.end())) {
         double trapzsum = 0;
         for (unsigned int ind = 0; ind != X.size() - 1; ++ind) {
