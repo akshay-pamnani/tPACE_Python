@@ -1,5 +1,5 @@
 import numpy as np
-from MgnJntDensity import MgnJntDensity, dunif
+from MgnJntDensity import MgnJntDensity, dunif, P0
 from SBFCompUpdate import SBFCompUpdate
 from NWMgnReg import nw_mgn_reg
 
@@ -35,7 +35,13 @@ def SBFitting(Y, x, X, h=None, K='epan', supp=None):
     for l in range(d):
         tmpIndex = tmpIndex * dunif(X[:, l], supp[l, 0], supp[l, 1]) * (supp[l, 1] - supp[l, 0])
 
-    
+    # Make sure tmpIndex is a boolean array
+    tmpIndex = tmpIndex.astype(bool)  # Ensure it is a boolean mask
+
+    print(tmpIndex)  # Check the values in tmpIndex
+    print(tmpIndex.dtype)  # Check the data type
+
+
     yMean = np.sum(Y[tmpIndex]) / len(Y) / P0(X, supp=supp)
     
     MgnJntDens = MgnJntDensity(x, X, h, K, supp)
