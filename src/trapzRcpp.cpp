@@ -12,8 +12,9 @@ template <class iter>
 bool custom_is_sorted(iter begin, iter end) {
     if (begin == end) return true;
     iter next = begin;
+    double tolerance = 1e-10; // Small tolerance for floating-point comparison
     while (++next != end) {
-        if (*next < *begin)
+        if (*next < *begin - tolerance)
             return false;
         ++begin;
     }
