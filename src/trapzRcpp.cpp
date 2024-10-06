@@ -10,13 +10,13 @@ namespace py = pybind11;
 // Function to check if a range is sorted (renamed to avoid conflict)
 template <class iter>
 bool custom_is_sorted(iter begin, iter end) {
-    std::cout << "Hi from cis." << std::endl;
     if (begin == end) return true;
     iter next = begin;
     while (++next != end) {
-        if (*next < *begin)
+        if (*next < *begin){
             std::cout << "Comparing *next: " << *next << " and *begin: " << *begin << std::endl;
             return false;
+        }   
         ++begin;
     }
     return true;
@@ -34,7 +34,6 @@ double trapz(const std::vector<double> &X, const std::vector<double> &Y) {
         }
         return trapzsum;
     } else {
-        std::cout << X.front() << X.back() << std::endl;
         throw std::invalid_argument("The input X-grid is not sorted.");
     }
 }
