@@ -12,9 +12,9 @@ template <class iter>
 bool custom_is_sorted(iter begin, iter end) {
     if (begin == end) return true;
     iter next = begin;
-    double tolerance = 1e-10; // Small tolerance for floating-point comparison
     while (++next != end) {
-        if (*next < *begin - tolerance)
+        if (*next < *begin)
+            std::cout << "Comparing *next: " << *next << " and *begin: " << *begin << std::endl;
             return false;
         ++begin;
     }
@@ -27,10 +27,6 @@ double trapz(const std::vector<double> &X, const std::vector<double> &Y) {
         throw std::invalid_argument("The input Y-grid does not have the same number of points as input X-grid.");
     }
 
-    for (const auto& value : X) {
-        std::cout << value << " ";
-    }
-    std::cout << std::endl;
 
 
     if (custom_is_sorted(X.begin(), X.end())) {
