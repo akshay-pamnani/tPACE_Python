@@ -10,6 +10,7 @@ namespace py = pybind11;
 // Function to check if a range is sorted (renamed to avoid conflict)
 template <class iter>
 bool custom_is_sorted(iter begin, iter end) {
+    std::cout << "Hi from cis." << std::endl;
     if (begin == end) return true;
     iter next = begin;
     while (++next != end) {
