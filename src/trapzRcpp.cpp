@@ -33,7 +33,7 @@ double trapz(const std::vector<double> &X, const std::vector<double> &Y) {
         }
         return trapzsum;
     } else {
-        std::cout << X.begin() << X.end() << std::endl;
+        std::cout << X.front() << X.back() << std::endl;
         throw std::invalid_argument("The input X-grid is not sorted.");
     }
 }
