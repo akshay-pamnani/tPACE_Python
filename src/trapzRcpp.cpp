@@ -3,7 +3,6 @@
 #include <limits> // To get NaN
 #include <vector>
 #include <algorithm>
-#include <iostream>
 
 namespace py = pybind11;
 
@@ -26,9 +25,6 @@ double trapz(const std::vector<double> &X, const std::vector<double> &Y) {
     if (Y.size() != X.size()) {
         throw std::invalid_argument("The input Y-grid does not have the same number of points as input X-grid.");
     }
-
-
-
     if (custom_is_sorted(X.begin(), X.end())) {
         double trapzsum = 0;
         for (unsigned int ind = 0; ind != X.size() - 1; ++ind) {
