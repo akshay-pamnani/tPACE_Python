@@ -53,27 +53,27 @@ def nw_mgn_reg(Y, x, X, h=None, K='epan', supp=None):
 
         pHatj = NormKernel(x[:, j], X[:, j], h[j], K, (supp[j, 0], supp[j, 1]))
 
-        print(f"Debug: pHatj shape for component {j}: {pHatj.shape}")
+        # print(f"Debug: pHatj shape for component {j}: {pHatj.shape}")
         
-        print(f"Debug: tmpIndex for component {j}: {tmpIndex}")
+        # print(f"Debug: tmpIndex for component {j}: {tmpIndex}")
         
         rHatj = (pHatj[:, tmpIndex] @ Y[tmpIndex]) / len(Y)
         
-        print(f"Debug: rHatj for component {j}: {rHatj.shape}, Value: {rHatj}")
+        # print(f"Debug: rHatj for component {j}: {rHatj.shape}, Value: {rHatj}")
 
         pHatj = np.sum(pHatj[:, tmpIndex], axis=1) / len(Y)
         
-        print(f"Debug: pHatj_sum for component {j}: {pHatj.shape}, Value: {pHatj}")
+        # print(f"Debug: pHatj_sum for component {j}: {pHatj.shape}, Value: {pHatj}")
 
         tmpInd = np.where(pHatj != 0)[0]
         
-        print(f"Debug: Non-zero indices for pHatj_sum for component {j}: {tmpInd}")
+        # print(f"Debug: Non-zero indices for pHatj_sum for component {j}: {tmpInd}")
 
         # If tmpInd is not empty, show its values
-        if len(tmpInd) > 0:
-            print(f"Debug: Values for valid indices in rHatj: {rHatj[tmpInd]}, pHatj_sum: {pHatj[tmpInd]}")
-        else:
-            print(f"Debug: No valid indices for component {j} to update fNW.")
+        # if len(tmpInd) > 0:
+        #     print(f"Debug: Values for valid indices in rHatj: {rHatj[tmpInd]}, pHatj_sum: {pHatj[tmpInd]}")
+        # else:
+        #     print(f"Debug: No valid indices for component {j} to update fNW.")
         
         fNW[tmpInd, j] = rHatj[tmpInd] / pHatj[tmpInd]
 

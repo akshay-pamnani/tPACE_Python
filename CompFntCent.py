@@ -17,14 +17,20 @@ def CompFntCent(f, j, x, MgnJntDens):
     Returns:
     np.ndarray: Centered component function values at the estimation grid (N-dim. vector).
     """
-    
+
     fj = f[:, j]
     xj = x[:, j]
 
     # Extract the marginal density values for the j-th component
     pMatMgn = MgnJntDens['pMatMgn'][:, j]
-    
+
+    # Sort xj and obtain the sorted indices
+    sorted_indices = np.argsort(xj)
+    xj_sorted = xj[sorted_indices]
+    fj_sorted = fj[sorted_indices]
+    pMatMgn_sorted = pMatMgn[sorted_indices]
+
     # Compute the centered component
-    tmp = fj - trapz(fj * pMatMgn[np.argsort(xj)], np.sort(xj))
-    
+    tmp = fj - trapz(fj_sorted * pMatMgn_sorted, xj_sorted)
+
     return tmp
