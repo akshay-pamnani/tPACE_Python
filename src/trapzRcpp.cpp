@@ -13,7 +13,7 @@ bool custom_is_sorted(iter begin, iter end) {
     if (begin == end) return true;
     iter next = begin;
     while (++next != end) {
-        std::cout << "Comparing *next: " << *next << " and *begin: " << *begin << std::endl;
+        //std::cout << "Comparing *next: " << *next << " and *begin: " << *begin << std::endl;
         if (*next < *begin){
             return false;
         }   
