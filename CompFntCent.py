@@ -26,10 +26,20 @@ def CompFntCent(f, j, x, MgnJntDens):
     pMatMgn = MgnJntDens['pMatMgn'][:, j]
 
     # Sort xj and obtain the sorted indices
-    sorted_indices = np.argsort(xj)
-    xj_sorted = xj[sorted_indices].flatten()
-    fj_sorted = fj[sorted_indices].flatten()
-    pMatMgn_sorted = pMatMgn[sorted_indices].flatten()
+    # sorted_indices = np.argsort(xj)
+    # xj_sorted = xj[sorted_indices].flatten()
+    # fj_sorted = fj[sorted_indices].flatten()
+    # pMatMgn_sorted = pMatMgn[sorted_indices].flatten()
+
+    # Create a structured array for sorting
+    data = np.column_stack((xj, fj, pMatMgn))
+
+    # Sort the structured array by the first column (xj)
+    data_sorted = data[np.argsort(data[:, 0])]
+
+    # Unpack the sorted data
+    xj_sorted, fj_sorted, pMatMgn_sorted = data_sorted[:, 0], data_sorted[:, 1], data_sorted[:, 2]
+
 
     # Debugging prints
     print("xj_sorted:", xj_sorted)
