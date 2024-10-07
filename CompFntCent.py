@@ -51,7 +51,7 @@ def CompFntCent(f, j, x, MgnJntDens):
         print("Warning: xj_sorted is not sorted correctly.")
 
     # Compute the centered component
-    tmp = fj - trapz(fj_sorted * pMatMgn_sorted, xj_sorted)
+    tmp = fj - trapz(xj_sorted, fj_sorted * pMatMgn_sorted)
 
     return tmp
 
