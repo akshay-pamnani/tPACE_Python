@@ -35,6 +35,15 @@ ext_modules = [
         ],
         language='c++',
     ),
+    Extension(
+        'RcppPseudoApprox',
+        sources=['RcppPseudoApprox.cpp'],
+        include_dirs=[
+            # Path to pybind11 headers
+            get_pybind_include(),
+        ],
+        language='c++',
+    ),
 ]
 
 setup(
