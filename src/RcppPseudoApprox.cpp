@@ -46,7 +46,7 @@ Eigen::VectorXd PseudoApprox(const Eigen::VectorXd &X, const Eigen::VectorXd &Y,
     return rr;
 }
 
-PYBIND11_MODULE(interpolate, m) {
+PYBIND11_MODULE(RcppPseudoApprox, m) {
     m.def("linear_interpolation", &LinearInterpolation, "Linear interpolation function");
     m.def("pseudo_approx", &PseudoApprox, "Pseudo Approximation using Linear Interpolation");
 }
