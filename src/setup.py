@@ -45,6 +45,15 @@ ext_modules = [
         ],
         language='c++',
     ),
+    Extension(
+        'Rcppsort',
+        sources=['Rcppsort.cpp'],
+        include_dirs=[
+            # Path to pybind11 headers
+            get_pybind_include(),
+        ],
+        language='c++',
+    ),
 ]
 
 setup(
