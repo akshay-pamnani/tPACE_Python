@@ -53,3 +53,4 @@ jobs:
         pytest test_trapzRcpp.py
         pytest test_SBFitting.py
         pytest test_RcppPseudoApprox.py
+        pytest test_BinRawCov.py
